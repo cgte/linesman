@@ -31,6 +31,13 @@ from webob.exc import HTTPNotFound
 from linesman import ProfilingSession, draw_graph
 
 
+_pil_major = int(Image.__version__.split(".")[0])
+if _pil_major >= 10:
+    ANTIALIAS = Image.Resampling.LANCZOS
+else:
+    ANTIALIAS = Image.ANTIALIAS
+
+
 log = logging.getLogger(__name__)
 
 # Graphs
@@ -251,7 +258,7 @@ class ProfilingMiddleware(object):
                 log.debug("Creating thumbnail for %s at %s.", session_uuid,
                                                               thumbnail_path)
                 im = Image.open(path, 'r')
-                im.thumbnail((600, 600), Image.ANTIALIAS)
+                im.thumbnail((600, 600), ANTIALIAS)
                 im.save(thumbnail_path)
 
         return StaticURLParser(GRAPH_DIR)
